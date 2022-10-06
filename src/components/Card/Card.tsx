@@ -1,9 +1,13 @@
 import { CardContainer } from "./Card.styles"
 
-const Card = () => {
+type CardProps = {
+  text:string
+}
+
+const Card = ({text}:CardProps) => {
   return (
     <CardContainer>
-        CARD
+        {text}
     </CardContainer>
   )
 }
