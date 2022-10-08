@@ -4,9 +4,15 @@ import AddNewItemButton from "../AddNewItem/AddItemButton";
 import Card from "../Card/Card";
 import { ColumnContainer, ColumnTitle } from "./Column.styles";
 import { useAppState } from "../../state/AppStateContext";
-import { addTask, moveList } from "../../state/actions";
+import {
+  addTask,
+  moveList,
+  moveTask,
+  setDraggedItem,
+} from "../../state/actions";
 import { useItemDrag } from "../../utils/useItemDrag";
 import { isHidden } from "../../utils/isHidden";
+import { DragItem } from "../../DragItem";
 
 type ColumnProps = {
   text: string;
@@ -20,21 +26,33 @@ const Column = ({ text, id, isPreview }: ColumnProps) => {
   const tasks = getTasksByListId(id);
   const { drag } = useItemDrag({ type: "COLUMN", id, text });
   const [, drop] = useDrop({
-    accept: "COLUMN",
-    hover() {
-      if (!draggedItem) {
-        return;
-      }
-      if (draggedItem.type === "COLUMN") {
-        if (draggedItem.id === id) {
+    accept: ["COLUMN", "CARD"],
+    hover(item: DragItem) {
+      if (item.type === "COLUMN") {
+        if (!draggedItem) {
           return;
         }
-        dispatch(moveList(draggedItem.id, id));
+        if (draggedItem.type === "COLUMN") {
+          if (draggedItem.id === id) {
+            return;
+          }
+          dispatch(moveList(draggedItem.id, id));
+        }
+      } else {
+        if (draggedItem?.type === "CARD") {
+          if (draggedItem.columnId === id) {
+            return;
+          }
+          if (tasks.length) {
+            return;
+          }
+          dispatch(moveTask(draggedItem.id, null, draggedItem.columnId, id));
+          dispatch(setDraggedItem({ ...draggedItem, columnId: id }));
+        }
       }
     },
   });
   drag(drop(ref));
-  console.log(isPreview)
   return (
     <ColumnContainer
       ref={ref}
@@ -42,7 +60,7 @@ const Column = ({ text, id, isPreview }: ColumnProps) => {
     >
       <ColumnTitle>{text}</ColumnTitle>
       {tasks.map((task) => (
-        <Card text={task.text} key={task.id} id={task.id} />
+        <Card text={task.text} key={task.id} id={task.id} columnId={id} />
       ))}
       <AddNewItemButton
         toggleButtonText="+ Add another task"
