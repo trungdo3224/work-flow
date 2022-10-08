@@ -16,12 +16,17 @@ const NewItemForm = ({ onAdd }: NewItemFormProps) => {
   const setInputHandle: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     setInput(e.target.value);
   };
+  const addTextHandle = (event:React.KeyboardEvent<HTMLInputElement>) => {
+    if(event.key === "Enter"){
+      onAdd(input);
+    }
+  }
   const onAddHandle = () => {
     onAdd(input);
   };
   return (
     <NewItemFormContainer>
-      <NewItemInput placeholder="Add a task..." ref={inputRef} value={input} onChange={setInputHandle} />
+      <NewItemInput placeholder="Add a task..." onKeyDown={addTextHandle} ref={inputRef} value={input} onChange={setInputHandle} />
       <NewItemButton onClick={onAddHandle}>
         Create
       </NewItemButton>
