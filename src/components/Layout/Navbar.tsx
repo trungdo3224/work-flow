@@ -2,7 +2,7 @@ import { NavContainer } from "./Navbar.styles";
 
 const Navbar = () => {
   return <NavContainer>
-    <h1>NAVBAR</h1>
+    <h2>WORKFLOW</h2>
   </NavContainer>;
 };
 

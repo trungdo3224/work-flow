@@ -1,6 +1,7 @@
 import styled from "styled-components";
+import { DragPreviewContainer } from "../../App.styles";
 
-export const CardContainer = styled.div`
+export const CardContainer = styled(DragPreviewContainer)`
   background-color: #fff;
   cursor: pointer;
   margin-top: 1rem;
